@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, Container, Heading, Input, Button, VStack, HStack, Text, SimpleGrid, Badge, useColorModeValue } from "@chakra-ui/react";
+import { Box, Container, Heading, Input, Button, VStack, HStack, Text, SimpleGrid, Badge, useColorModeValue, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from "@chakra-ui/react";
 import { FaSearch, FaBriefcase, FaMapMarkerAlt } from "react-icons/fa";
 import JobPostingForm from "../components/JobPostingForm";
+import JobApplicationForm from "../components/JobApplicationForm";
 
 const JobCard = ({ job }) => {
   const cardBg = useColorModeValue("white", "gray.700");
@@ -14,6 +15,12 @@ const JobCard = ({ job }) => {
         <Text>{job.location}</Text>
       </HStack>
       <Badge mt={2} colorScheme="green">{job.type}</Badge>
+      <Button mt={4} colorScheme="blue" onClick={() => {
+        setSelectedJob(job);
+        setIsModalOpen(true);
+      }}>
+        Apply
+      </Button>
     </Box>
   );
 };
@@ -28,11 +35,19 @@ const Index = () => {
     { id: 5, title: "Marketing Specialist", company: "GrowthInc", location: "Los Angeles, CA", type: "Full-time" },
   ]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+
   const handleJobSubmit = (newJob) => {
     setJobListings((prevListings) => [
       ...prevListings,
       { ...newJob, id: prevListings.length + 1 },
     ]);
+  };
+
+  const handleJobApplication = (applicationData) => {
+    console.log("Job application submitted:", applicationData);
+    // Here you would typically send this data to your backend
   };
 
   const filteredJobs = jobListings.filter(job =>
@@ -80,6 +95,21 @@ const Index = () => {
           </Box>
         )}
       </VStack>
+
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Apply for {selectedJob?.title}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <JobApplicationForm
+              jobId={selectedJob?.id}
+              onSubmit={handleJobApplication}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Container>
   );
 };
