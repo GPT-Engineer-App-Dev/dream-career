@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { Box, Container, Heading, Input, Button, VStack, HStack, Text, SimpleGrid, Badge, useColorModeValue } from "@chakra-ui/react";
 import { FaSearch, FaBriefcase, FaMapMarkerAlt } from "react-icons/fa";
-
-const jobListings = [
-  { id: 1, title: "Software Engineer", company: "TechCorp", location: "San Francisco, CA", type: "Full-time" },
-  { id: 2, title: "Product Manager", company: "InnovateCo", location: "New York, NY", type: "Full-time" },
-  { id: 3, title: "UX Designer", company: "DesignHub", location: "Remote", type: "Contract" },
-  { id: 4, title: "Data Analyst", company: "DataDriven", location: "Chicago, IL", type: "Part-time" },
-  { id: 5, title: "Marketing Specialist", company: "GrowthInc", location: "Los Angeles, CA", type: "Full-time" },
-];
+import JobPostingForm from "../components/JobPostingForm";
 
 const JobCard = ({ job }) => {
   const cardBg = useColorModeValue("white", "gray.700");
@@ -27,6 +20,20 @@ const JobCard = ({ job }) => {
 
 const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [jobListings, setJobListings] = useState([
+    { id: 1, title: "Software Engineer", company: "TechCorp", location: "San Francisco, CA", type: "Full-time" },
+    { id: 2, title: "Product Manager", company: "InnovateCo", location: "New York, NY", type: "Full-time" },
+    { id: 3, title: "UX Designer", company: "DesignHub", location: "Remote", type: "Contract" },
+    { id: 4, title: "Data Analyst", company: "DataDriven", location: "Chicago, IL", type: "Part-time" },
+    { id: 5, title: "Marketing Specialist", company: "GrowthInc", location: "Los Angeles, CA", type: "Full-time" },
+  ]);
+
+  const handleJobSubmit = (newJob) => {
+    setJobListings((prevListings) => [
+      ...prevListings,
+      { ...newJob, id: prevListings.length + 1 },
+    ]);
+  };
 
   const filteredJobs = jobListings.filter(job =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -54,6 +61,11 @@ const Index = () => {
             Search
           </Button>
         </HStack>
+
+        <Box mb={8}>
+          <Heading as="h2" size="xl" mb={4}>Post a New Job</Heading>
+          <JobPostingForm onSubmit={handleJobSubmit} />
+        </Box>
 
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {filteredJobs.map(job => (
